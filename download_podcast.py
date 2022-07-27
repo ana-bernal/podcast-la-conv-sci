@@ -10,10 +10,10 @@ def download_podcast(url):
     html = requests.get(url)
     soup = bs4.BeautifulSoup(html.text,'html.parser')
 
-    data = json.loads(soup.find('script', type='application/ld+json').text)
-    podcast_link = requests.get(data["audio"]["contentUrl"])
+    data = json.loads(soup.find_all('script', type='application/ld+json')[1].text)
+    podcast_link = requests.get(data["@graph"][0]['mainEntity']['contentUrl'])
 
-    file_name = data["hasPart"]["datePublished"][:11]+data["audio"]["name"][:-1]
+    file_name = data['@graph'][0]['dateCreated'][:10]+ ' '+ data['@graph'][0]['name']
 
     f = open(file_name,'wb')
     f.write(podcast_link.content)
